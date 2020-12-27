@@ -6,6 +6,9 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using Android.Content;
+using Java.Security;
+using Plugin.GoogleClient;
 
 namespace MisiakAPp.Droid
 {
@@ -18,6 +21,20 @@ namespace MisiakAPp.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(savedInstanceState);
+
+            CrossGoogleClient.Current.OnLogin += (s, a) =>
+            {
+                switch (a.Status)
+                {
+                    case GoogleActionStatus.Completed:
+                        Toast.MakeText(ApplicationContext, "Google auth succeeded", ToastLength.Long).Show();
+                        break;
+                    default:
+                        Toast.MakeText(ApplicationContext, string.Format("Google auth failed with code: {0}", a.Status.ToString()), ToastLength.Long).Show();
+                        break;
+                }
+            };
+            CrossGoogleClient.Current.LoginAsync();
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
